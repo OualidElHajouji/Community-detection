@@ -3,11 +3,11 @@ Objectifs:
 
 Semaine 1:
  -ABDELLAH:
-    -Coder l'algorithme connaissant une matrice en entrée
+    -Coder l'algorithme connaissant une matrice en entrée. DONE
     -Décrire l'algorithme en LaTeX (++)
  -OUALID: 
-    -Simuler le Block Stochastic Model
-    -Essayer de visualiser
+    -Simuler le Block Stochastic Model DONE
+    -Essayer de visualiser DONE
 
 Semaine 2:
 
