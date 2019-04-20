@@ -17,4 +17,4 @@ def simulate(n, cin, cout, k):
     U = (U + U.T)/2
     Matrix = np.array([[B[Classes[i],Classes[j]]*(i !=j) for i in range(n)] for j in range(n)])
     A = (U<=Matrix)
-    return A
+    return A, Classes

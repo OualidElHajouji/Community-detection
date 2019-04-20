@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 
-def coloring(clusters):
+def coloring(clusters, k):
     n = np.size(clusters)
     if(k == 1):
         return np.array(['r']*n)
@@ -15,6 +15,6 @@ def matrixGraph(affinityMatrix, clusters, k):
     pos = nx.spring_layout(G)
     G.to_undirected()
 
-    color = coloring(clusters)
+    color = coloring(clusters, k)
 
     nx.draw(G, node_color=color)
