@@ -1,5 +1,12 @@
 import networkx as nx
 import numpy as np
+import matplotlib.pyplot as plt
+
+"""
+
+Functions for Graph drawing
+
+"""
 
 def coloring(clusters, k):
     n = np.size(clusters)
@@ -17,4 +24,10 @@ def matrixGraph(affinityMatrix, clusters, k):
 
     color = coloring(clusters, k)
 
-    nx.draw(G, node_color=color)
+    nx.draw(G, node_color=color, node_size = 10, line_width = 0.1)
+
+"""
+
+Functions for Boxplot drawing
+
+"""

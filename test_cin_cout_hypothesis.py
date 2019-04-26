@@ -8,19 +8,25 @@ import spectral_clusering_1 as spc
 import black_stochastic_model as bsm
 import clustering_quality as qlt
 
-n = 1000
+n = 100
 k = 2
 cin = 100
 cout = 10
 
-A_Simulations = np.array([])
-A_Classes = np.array([])
-Quality = np.array([])
-for j in range(10):
-   print("----------------")
-   for i in range(1, 11):
-        A, classes = bsm.simulate(n, cin, i*cout, k)
-        C = spc.spectral_clustering(A, k)
 
-        quality = qlt.normal(classes, C, n)
-        print(quality)
+def misclustering_MonteCarloBasic(nb_X, nb_Simu, random = False):
+    Quality = np.array([[-1 for array in range(nb_X)]])
+    if(random):
+        X = np.random.rand(nb_X)
+    else:
+        X = np.array([i for i in range(nb_X+1)])/(nb_X+1)
+    for j in range(nb_Simu):
+        row = np.array([])
+        for i in range(1, nb_X + 1):
+            A, classes = bsm.simulate(n, cin, X[i] * cin, k)
+            clusters = spc.spectral_clustering(A, k)
+            row = np.append(row, qlt.normal(classes, clusters, n))
+        Quality = np.append(Quality, [row], 0)
+        print(row)
+    return Quality
+

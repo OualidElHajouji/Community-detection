@@ -14,10 +14,10 @@ import matplotlib.pyplot as plt
 import graph_drawing as gd
 
 " Phase 1: Initialise the parameters of the test"
-n = 600
+n = 200
 cin = 100
-cout = 10
-k = 3
+cout = 20
+k = 2
 
 
 A, classesA = bsm.simulate(n, cin, cout, k)
@@ -27,5 +27,6 @@ labelsA = spc.spectral_clustering(A, k)
 
 " Phase 3: Visualise well the data in a suitable graph "
 gd.matrixGraph(A, labelsA, k)
+
 
 plt.show()
