@@ -19,6 +19,7 @@ from sklearn.cluster import KMeans
 
 def laplacian(A, laplacian_method = 1):
     if laplacian_method==0:
+      A = numpy.matrix.astype(A, float)
       return A
     if laplacian_method==1:
       D = numpy.zeros(A.shape)
