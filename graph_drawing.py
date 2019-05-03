@@ -25,7 +25,6 @@ def matrixGraph(affinityMatrix, clusters, k):
     color = coloring(clusters, k)
 
     nx.draw(G, node_color=color, node_size = 10, line_width = 0.1)
-
 """
 
 Functions for Boxplot drawing

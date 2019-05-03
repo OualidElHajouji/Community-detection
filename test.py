@@ -14,13 +14,13 @@ import matplotlib.pyplot as plt
 import graph_drawing as gd
 
 " Phase 1: Initialise the parameters of the test"
-n = 500
+n = 1000
 cin = 100
-cout = 20
+cout = 10
 k = 2
 
 
-A, classesA = bsm.simulate(n, cin, cout, k, [.5, .5])
+A, classesA = bsm.simulate(n, cin, cout, k, distribution = [.005, .995])
 
 " Phase 2: Apply Spectral Clustering "
 labelsA = spc.spectral_clustering(A, k, laplacian_method=0)

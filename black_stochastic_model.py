@@ -22,12 +22,15 @@ def generateClasses(n, k, distribution = []):
             res[i] = j
         return res
 
-def simulate(n, cin, cout, k, distribution = []):
+def simulate(n, cin, cout, k, distribution = [], classes = np.array([])):
     """Given a matrix B indicating probabilities of links between two elements of a class,
      simulation of the graph"""
     B = (cin / n - cout / n) * np.identity(k) + (cout / n) * np.ones((k, k))
     p = k * [1 / k]
-    Classes = generateClasses(n, k, distribution)
+    if(classes.size == 0):
+        Classes = generateClasses(n, k, distribution)
+    else:
+        Classes = classes
 
     U = np.random.rand(n,n)
     U = (U + U.T)/2
