@@ -25,7 +25,7 @@ def misclustering_MonteCarloBasic(min = 0.2, max = 0.6, nb_X = 50, nb_Simu = 80,
         U = np.linspace(min, max, nb_X)
         X = qlt.inverse(U, cin, n)
         print(X)
-    classes = generateClasses(n, k, distribution = [])
+    classes = bsm.generateClasses(n, k, distribution = [])
     for j in range(nb_Simu):
         for i in range(nb_X):
             A= bsm.simulate(n, cin, X[i] * cin, k, classes)
