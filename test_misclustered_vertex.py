@@ -26,15 +26,15 @@ distribution = [.2, .8]
 print(qlt.hyp_test(cin, cout, n))
 
 def monteCarloApproach(nb_Simu = 100, set_of_vertices = range(200), test = 0):
-    v = np.size(set_of_vertices)
     res = 0
+    classes = generateClasses(n, k, distribution = [])
     for i in range(nb_Simu):
-        graph, classes = bsm.simulate(n, cin, cout, k, distribution)
+        graph = bsm.simulate(n, cin, cout, k, distribution)
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)
         res += qlt.badly_clustered_test(set_of_vertices, v, classes, clusters, test)
     return res/nb_Simu
 
-"""
+
 TO DO:
-def importanceSamplingApproach(nb_Simu = 100, set_of_vertices = range(200), test = 0):
-"""
+def importanceSamplingApproach(nb_Simu = 100, set_of_vertices = range(200), set, test = 0):
+
