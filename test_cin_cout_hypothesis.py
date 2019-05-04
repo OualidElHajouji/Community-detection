@@ -9,15 +9,15 @@ import black_stochastic_model as bsm
 import clustering_quality as qlt
 import matplotlib.pyplot as plt
 
-n = 150
+n = 100
 k = 2
-cin = 100
+cin = 90
 cout = 10
 
 rmax = np.sqrt(cin/np.log(n))
 
 
-def misclustering_MonteCarloBasic(min = 0.2, max = 0.6, nb_X = 50, nb_Simu = 80, random = False):
+def misclustering_MonteCarloBasic(min = 0.2, max = 1.5, nb_X = 50, nb_Simu = 80, random = False):
     Quality = np.zeros((nb_Simu, nb_X))
     if(random):
         X = np.random.rand(nb_X)
@@ -31,7 +31,7 @@ def misclustering_MonteCarloBasic(min = 0.2, max = 0.6, nb_X = 50, nb_Simu = 80,
             A= bsm.simulate(n, cin, X[i] * cin, k, classes)
             clusters = spc.spectral_clustering(A, k, laplacian_method=0)
             Quality[j, i] = qlt.normal(classes, clusters, n)
-        print(Quality[j])
+        print(j)
     return U, np.mean(Quality, axis=0)
 
 X, Y = misclustering_MonteCarloBasic()

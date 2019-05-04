@@ -19,16 +19,17 @@ import matplotlib.pyplot as plt
 
 n = 100
 cin = 90
-cout = 10
+cout = 72
 k = 2
 distribution = [.2, .8]
 
 print(qlt.hyp_test(cin, cout, n))
 
-def monteCarloApproach(nb_Simu = 100, set_of_vertices = range(1)):
+def monteCarloApproach(nb_Simu = 10000, set_of_vertices = range(1)):
     res = 0
     classes = bsm.generateClasses(n, k, distribution = [])
     v = len(set_of_vertices)
+    classes = [0]*50+[1]*50
     for i in range(nb_Simu):
         print(i)
         graph = bsm.simulate(n, cin, cout, k, classes)
@@ -38,10 +39,10 @@ def monteCarloApproach(nb_Simu = 100, set_of_vertices = range(1)):
 
 
 def equivalence_classes(classes):
-    """ Returns the list of all classes(of length k )"""
+    """ Returns the list (of length k) of all classes"""
     classes_list = [[]]*k
     for i in range(len(classes)):
-        classes_list[classes[i]].append(i)
+        classes_list[classes[i]] = classes_list[classes[i]] +[i]
     return classes_list
 
 def exponent_inside(graph, classes, classes_list, set_of_vertices):
@@ -49,14 +50,14 @@ def exponent_inside(graph, classes, classes_list, set_of_vertices):
     for i in set_of_vertices:
         classe = classes_list[classes[i]]
         for j in classe:
-            res+=2*graph[i,j]
+            res += 2*graph[i,j]
         res -= np.sum(graph[i,:])
     return res
 
 def exponent_outside(classes, classes_list, set_of_vertices):
     sum = 0
     for i in set_of_vertices:
-        sum += 2*len(classes_list[classes[i]])-n
+        sum += 2*len(classes_list[classes[i]])-n-1
     return sum
 
 def importanceSamplingApproach(nb_Simu = 10000, set_of_vertices = range(1)):
@@ -81,9 +82,7 @@ def importanceSamplingApproach(nb_Simu = 10000, set_of_vertices = range(1)):
     return res
 
 
-print(importanceSamplingApproach(nb_Simu = 1000, set_of_vertices = range(1)))
+print(importanceSamplingApproach(nb_Simu = 10000, set_of_vertices = range(1)))
+#print(monteCarloApproach(nb_Simu = 10000, set_of_vertices = range(1)))
 
-graph = bsm.simulate_Importance_Sampling(n, cin, cout, k, range(1), [0]*50 + [1]*50)
 
-print(graph[2,2])
-print(exponent_inside(graph, [0]*50 + [1]*50, equivalence_classes([0]*50 + [1]*50), range(1)))

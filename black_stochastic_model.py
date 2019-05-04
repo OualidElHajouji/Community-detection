@@ -46,9 +46,8 @@ def simulate_Importance_Sampling(n, cin, cout, k, set, Classes):
     for i in set:
         for j in range(n):
             modified_matrix[i,j]=(cout/n)*int((matrix[i,j]==cin/n)) + (cin/n)*int((matrix[i,j]==cout/n))
-            modified_matrix[j,i]= modified_matrix[i,j]
+            modified_matrix[j,i] = modified_matrix[i,j]
     A = (U <= modified_matrix)
     return A
 
 
-print(simulate_Importance_Sampling(100, 90, 10, 2, range(1), [0]*50+[1]*50))
