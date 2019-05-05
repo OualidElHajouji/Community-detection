@@ -8,8 +8,8 @@ Initial testing. Purpose:
 
 """
 
-import spectral_clusering_1 as spc
-import black_stochastic_model as bsm
+import spectral_clustering_1 as spc
+import stochastic_block_model as sbm
 import matplotlib.pyplot as plt
 import graph_drawing as gd
 
@@ -19,8 +19,8 @@ cin = 90
 cout = 10
 k = 2
 
-classesA = bsm.generateClasses(n, k, distribution=[])
-A = bsm.simulate_Importance_Sampling(n, cin, cout, k, range(1),classesA)
+classesA = sbm.generateClasses(n, k, distribution=[])
+A = sbm.simulate_Importance_Sampling(n, cin, cout, k, range(1),classesA)
 
 " Phase 2: Apply Spectral Clustering "
 labelsA = spc.spectral_clustering(A, k, laplacian_method=0)

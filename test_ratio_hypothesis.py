@@ -4,8 +4,8 @@ Generates multiple BSM with different parameters c_in, c_out
 """
 
 import numpy as np
-import spectral_clusering_1 as spc
-import black_stochastic_model as bsm
+import spectral_clustering_1 as spc
+import stochastic_block_model as sbm
 import clustering_quality as qlt
 import matplotlib.pyplot as plt
 
@@ -25,10 +25,10 @@ def misclustering_MonteCarloBasic(min = 0.2, max = 1.5, nb_X = 50, nb_Simu = 80,
     else:
         U = np.linspace(min, max, nb_X)   # Space of graph_ratio
         X = qlt.inverse(U, cin, n)        # Corresponding space of x = cout/cin
-    classes = bsm.generateClasses(n, k, distribution)
+    classes = sbm.generateClasses(n, k, distribution)
     for j in range(nb_Simu):
         for i in range(nb_X):
-            A = bsm.simulate(n, cin, X[i] * cin, k, classes)  # cout = x*cin
+            A = sbm.simulate(n, cin, X[i] * cin, k, classes)  # cout = x*cin
             clusters = spc.spectral_clustering(A, k, laplacian_method=0)
             Quality[j, i] = qlt.normal(classes, clusters, n)    #Quality for the current simulation, and current value of cout
         print(j)

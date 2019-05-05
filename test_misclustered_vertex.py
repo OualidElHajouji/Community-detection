@@ -12,8 +12,8 @@ Approach 2: Using importance sampling. Expected probability: >0.
 """
 
 import numpy as np
-import spectral_clusering_1 as spc
-import black_stochastic_model as bsm
+import spectral_clustering_1 as spc
+import stochastic_block_model as sbm
 import clustering_quality as qlt
 import matplotlib.pyplot as plt
 
@@ -30,14 +30,14 @@ def monteCarloApproach(nb_Simu=10000, set_of_vertices=range(1), random_class=Fal
     """Calculates the probability of misclustering with a naive Monte Carlo approach"""
     res = 0
     if (random_class):   #The class can either be random, or chosen
-        classes = bsm.generateClasses(n, k, distribution=[])
+        classes = sbm.generateClasses(n, k, distribution=[])
     else:
         classes = [0] * (n // 2) + [1] * (n - n // 2)
     v = len(set_of_vertices)
 
     for i in range(nb_Simu):
         print(i)
-        graph = bsm.simulate(n, cin, cout, k, classes)
+        graph = sbm.simulate(n, cin, cout, k, classes)
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)   #We make sure to get the labels of the clusters right
         res += qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)
     return res / nb_Simu
@@ -97,7 +97,7 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     res = 0
 
     if random_class:
-        classes = bsm.generateClasses(n, k, distribution=[])
+        classes = sbm.generateClasses(n, k, distribution=[])
     else:
         classes = [0] * (n // 2) + [1] * (n - n // 2)
 
@@ -109,7 +109,7 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     for i in range(nb_Simu):
         print(i)  #In order to see the progress of the algorithm
 
-        graph = bsm.simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, classes, model)  #Simulation specific to the importance sampling model
+        graph = sbm.simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, classes, model)  #Simulation specific to the importance sampling model
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)
         badly_clustered = qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)  #Whether the vertices are badly clustered
         fac_inside = factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, model)
