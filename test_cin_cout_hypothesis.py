@@ -14,23 +14,23 @@ k = 2
 cin = 90
 cout = 10
 
-rmax = np.sqrt(cin/np.log(n))
+rmax = np.sqrt(cin/np.log(n))  # Maximum value of the graph ratio
 
 
-def misclustering_MonteCarloBasic(min = 0.2, max = 1.5, nb_X = 50, nb_Simu = 80, random = False):
+def misclustering_MonteCarloBasic(min = 0.2, max = 1.5, nb_X = 50, nb_Simu = 80, random = False, distribution = []):
+    """Returns nb_X values of the quality of the clustering (accuracy), each one corresponding to a value of the graph_ratio """
     Quality = np.zeros((nb_Simu, nb_X))
     if(random):
         X = np.random.rand(nb_X)
     else:
-        U = np.linspace(min, max, nb_X)
-        X = qlt.inverse(U, cin, n)
-        print(X)
-    classes = bsm.generateClasses(n, k, distribution = [])
+        U = np.linspace(min, max, nb_X)   # Space of graph_ratio
+        X = qlt.inverse(U, cin, n)        # Corresponding space of x = cout/cin
+    classes = bsm.generateClasses(n, k, distribution)
     for j in range(nb_Simu):
         for i in range(nb_X):
-            A= bsm.simulate(n, cin, X[i] * cin, k, classes)
+            A = bsm.simulate(n, cin, X[i] * cin, k, classes)  # cout = x*cin
             clusters = spc.spectral_clustering(A, k, laplacian_method=0)
-            Quality[j, i] = qlt.normal(classes, clusters, n)
+            Quality[j, i] = qlt.normal(classes, clusters, n)    #Quality for the current simulation, and current value of cout
         print(j)
     return U, np.mean(Quality, axis=0)
 

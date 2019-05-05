@@ -18,6 +18,7 @@ from sklearn.cluster import KMeans
 
 
 def laplacian(A, laplacian_method = 1):
+    """Calculates the laplacian matrix : two methods"""
     if laplacian_method==0:
       A = numpy.matrix.astype(A, float)
       return A
@@ -29,11 +30,13 @@ def laplacian(A, laplacian_method = 1):
 
 
 def k_means(X, n_clusters):
+    """Classical k_means algorithm"""
     kmeans = KMeans(n_clusters=n_clusters, random_state=1231)
     return kmeans.fit(X).labels_
 
 
 def spectral_clustering(affinity, n_clusters, cluster_method=k_means, laplacian_method=1):
+    """Main spectral clustering algorithm"""
     L = laplacian(affinity, laplacian_method)
     eig_val, eig_vect = scipy.sparse.linalg.eigs(L, n_clusters)
     X = eig_vect.real
