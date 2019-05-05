@@ -35,7 +35,7 @@ def simulate(n, cin, cout, k, Classes):
     return A
 
 
-def simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, Classes, model = 0):
+def simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, Classes, model):
     """Given a matrix B indicating probabilities of links between two elements of two classes, we simulate the graph with a slightly modified SBM. If model = 0, we invert,
     for the elements of set, the probabilites of intra-class and extra-class links, then simulate the graph. Else, if model = 1, we set every probability to 0.5 for i in set."""
 
@@ -46,7 +46,7 @@ def simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, Classes, mode
     modified_matrix = np.copy(matrix)
     for i in set_of_vertices:
         for j in range(n):
-            modified_matrix[i,j] = (1-model)*((cout/n)*int((matrix[i,j]==cin/n)) + (cin/n)*int((matrix[i,j]==cout/n)))+model*(1/2)*(i!=j)  #Inversion of the probabilities if model =0, probability = 0.5 else.
+            modified_matrix[i,j] = (1-model)*((cout/n)*int((matrix[i,j]==cin/n)) + (cin/n)*int((matrix[i,j]==cout/n)))+(model*(1/2)*(i!=j)) #Inversion of the probabilities if model =0, probability = 0.5 else.
             modified_matrix[j,i] = modified_matrix[i,j]
 
     A = (U <= modified_matrix)

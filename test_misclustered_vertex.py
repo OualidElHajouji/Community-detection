@@ -1,7 +1,7 @@
 """
 
 Purpose of the test file:
-Given a certain subset of vertex within a random graph verifying the ratio hypothesis, estimate the probability of
+Given a certain subset of vertex within a random graph, estimate the probability of
 clustering badly the elements of this subset
 
 Considered a rare event.
@@ -21,7 +21,7 @@ n = 100
 cin = 90
 cout = 72
 k = 2
-distribution = [.2, .8]
+
 
 print(qlt.graph_ratio(cin, cout, n))
 
@@ -72,7 +72,6 @@ def factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, mode
         for i in set_of_vertices:
             classe = subset_superior_to(classes_list[classes[i]],i)
             sum = np.sum(graph[i,classe])
-            print(sum)
             product = product*np.power((pin/(1-pin)), sum)*np.power((pout/(1-pout)), (np.sum(graph[i,i+1:])-sum))
         return product
 
@@ -109,9 +108,9 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     for i in range(nb_Simu):
         print(i)  #In order to see the progress of the algorithm
 
-        graph = sbm.simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, classes, model)  #Simulation specific to the importance sampling model
+        graph = sbm.simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, classes, model)  # Simulation specific to the importance sampling model
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)
-        badly_clustered = qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)  #Whether the vertices are badly clustered
+        badly_clustered = qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)  # Whether the vertices are badly clustered
         fac_inside = factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, model)
         res += fac_inside * int(badly_clustered)    # This is inside the expectation
 
@@ -121,7 +120,7 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     return res
 
 
-print(importanceSamplingApproach(nb_Simu=200, set_of_vertices=range(1), model=1))
+print(importanceSamplingApproach(nb_Simu=1000, set_of_vertices=range(1), model=1))
 
-# print(monteCarloApproach(nb_Simu = 10000, set_of_vertices = range(1)))
+#print(monteCarloApproach(nb_Simu = 1000, set_of_vertices = range(1)))
 
