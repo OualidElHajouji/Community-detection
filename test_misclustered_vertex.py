@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 n = 100
 cin = 90
-cout = 72
+cout = 50
 k = 2
 
 
@@ -120,7 +120,7 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     return res
 
 
-print(importanceSamplingApproach(nb_Simu=1000, set_of_vertices=range(1), model=1))
+print(importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0))
 
 #print(monteCarloApproach(nb_Simu = 1000, set_of_vertices = range(1)))
 
