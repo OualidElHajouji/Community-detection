@@ -27,6 +27,11 @@ def laplacian(A, laplacian_method = 1):
       w = numpy.sum(A, axis=0)
       D.flat[::len(w) + 1] = w ** (-0.5)  # set the diag of D to w
       return D.dot(A).dot(D)
+    if laplacian_method==2:
+      D = numpy.zeros(A.shape)
+      w = numpy.sum(A, axis = 0)
+      D.flat[::len(w) + 1] = w ** (-1.)  # set the diag of D to w
+      return D.dot(A)
 
 
 def k_means(X, n_clusters):
