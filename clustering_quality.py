@@ -28,9 +28,13 @@ def well_clustered(j, classes, clusters):
     return classes[j] == clusters[j]
 
 def badly_clustered_test(vertices, cardinal_of_vertices, classes, clusters, test = 1):
-    """Says whether a set of vertice is badly clustered. test = 0 --> well-clustered = at least one node is badly clustered
-                                                        test = 1 --> well-clustered = every node is badly clustered"""
+    """Says whether a set of vertices is badly clustered. test = 0 --> well-clustered = at least one node is badly clustered
+                                                          test = 1 --> well-clustered = every node is badly clustered"""
     q = np.sum([int(classes[i] != clusters[i]) for i in vertices])
     return (1 - test)*(q != 0) + test*(q == cardinal_of_vertices)
+
+def nb_of_misclustered(set_of_vertices, classes, clusters):
+    """Returns the number of misclustered vertices among the set of vertices"""
+    return(np.sum([int(classes[i] != clusters[i]) for i in set_of_vertices]))
 
 

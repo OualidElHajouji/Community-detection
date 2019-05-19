@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 n = 100
 cin = 90
-cout = 50
+cout = 72
 k = 2
 
 
@@ -60,23 +60,24 @@ def subset_superior_to(set, i):
     return res
 
 
-def factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, model):
+def factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, qin, qout, model):
     """Calculates the factor inside the expectation in the importance sampling formula, depending on the model """
-    if (model==0):  # Probability inversion
+    if (model==0):  # Probability inversion (qin =pout, qout = pin)
+        sum = 0
         for i in set_of_vertices:
             classe = subset_superior_to(classes_list[classes[i]],i)   # All vertices related to i and > i
-            sum = 2*np.sum(graph[i,classe])-np.sum(graph[i, i+1:])
+            sum += 2*np.sum(graph[i,classe])-np.sum(graph[i, i+1:])
         return np.power((pin*(1-pout))/(pout*(1-pin)), sum)  #We apply the theoretical formula
-    else:  # 0.5-model
+    else:  # model with given probabilities qin, qout
         product = 1
         for i in set_of_vertices:
             classe = subset_superior_to(classes_list[classes[i]],i)
             sum = np.sum(graph[i,classe])
-            product = product*np.power((pin/(1-pin)), sum)*np.power((pout/(1-pout)), (np.sum(graph[i,i+1:])-sum))
+            product = product*np.power((pin*(1-qin))/(qin*(1-pin)), sum)*np.power((pout*(1-qout))/(qout*(1-pout)), (np.sum(graph[i,i+1:])-sum))
         return product
 
 
-def factor_outside(classes, classes_list, set_of_vertices, pin, pout, model):
+def factor_outside(classes, classes_list, set_of_vertices, pin, pout, qin, qout, model):
     """Calculates the factor outside the expectation in the importance sampling formula, depending on the model """
     if model == 0:
         sum = 0
@@ -88,13 +89,14 @@ def factor_outside(classes, classes_list, set_of_vertices, pin, pout, model):
         product = 1
         for i in set_of_vertices:
             classe = subset_superior_to(classes_list[classes[i]], i)
-            product *= np.power(2.,n-i-1)*np.power(1-pin,len(classe))*np.power(1-pout,n-i-1-len(classe))
+            product *= np.power((1-pin)/(1-qin),len(classe))*np.power((1-pout)/(1-qout),n-i-1-len(classe))
         return product
 
-def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0, random_class=False):
+def importanceSamplingApproach(qin, qout,nb_Simu=10000, set_of_vertices=range(1), model=1, random_class=False):
     """Returns the probability of misclustering of a given set_of_vertices using a model of importance sampling"""
-    res = 0
-
+    proba = 0
+    sum = 0
+    variance = 0
     if random_class:
         classes = sbm.generateClasses(n, k, distribution=[])
     else:
@@ -106,21 +108,31 @@ def importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0,
     v = len(set_of_vertices)
 
     for i in range(nb_Simu):
-        print(i)  #In order to see the progress of the algorithm
+        print(i) #In order to see the progress of the algorithm
 
-        graph = sbm.simulate_Importance_Sampling(n, cin, cout, k, set_of_vertices, classes, model)  # Simulation specific to the importance sampling model
+        graph = sbm.simulate_Importance_Sampling(n, cin, cout, qin, qout, k, set_of_vertices, classes, model)  # Simulation specific to the importance sampling model
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)
         badly_clustered = qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)  # Whether the vertices are badly clustered
-        fac_inside = factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, model)
-        res += fac_inside * int(badly_clustered)    # This is inside the expectation
+        fac_inside = factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, qin, qout, model)
+        proba += fac_inside * int(badly_clustered)    # This is inside the expectation
+        variance += np.power(fac_inside,2)*int(badly_clustered)
+        sum += int(badly_clustered)
+
+    fac_outside = factor_outside(classes, classes_list, set_of_vertices, pin, pout,qin,qout, model) # Outside the expectation
+    proba = (proba * fac_outside) / nb_Simu
+    variance = (variance*np.power(fac_outside,2)/nb_Simu) - np.power(proba,2)
+    std = np.sqrt(variance)
+    return proba, std
 
 
-    fac_outside = factor_outside(classes, classes_list, set_of_vertices, pin, pout, model) # Outside the expectation
-    res = (res * fac_outside) / nb_Simu
-    return res
+proba, std = importanceSamplingApproach(0.2,0.9,nb_Simu=1000, set_of_vertices=range(1), model=1)
 
-
-print(importanceSamplingApproach(nb_Simu=10000, set_of_vertices=range(1), model=0))
+print("Probability of bad clustering, with n =",n,", cin =",cin, ", cout =",cout, " is ", proba)
+print("Standard deviation : ", std)
+a = max(proba-(1.96*std/np.sqrt(n)),0)
+b = proba+(1.96*std/np.sqrt(n))
+print("Confidence interval (95%) : [",a,",",b,"]")
 
 #print(monteCarloApproach(nb_Simu = 1000, set_of_vertices = range(1)))
+
 
