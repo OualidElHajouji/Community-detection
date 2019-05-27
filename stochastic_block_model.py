@@ -1,5 +1,5 @@
 """
-Simulates the Block Stochastic Model
+Simulates the Stochastic Block Model (in normal case, and importance sampling case)
 
 Contains the parameters of the test
 """

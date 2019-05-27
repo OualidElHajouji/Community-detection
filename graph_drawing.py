@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 """
 
-Functions for Graph drawing
+Functions for Graph drawing using networkx
 
 """
 
@@ -21,7 +21,7 @@ def coloring(clusters, k):
 def matrixGraph(affinityMatrix, clusters, k):
     """Draws the graph given the clusters and the affinity matrix"""
     G = nx.from_numpy_matrix(affinityMatrix)
-    pos = nx.spring_layout(G)
+    pos = nx.spring_layout(G)   # Specific layout for large graphs
     G.to_undirected()
 
     color = coloring(clusters, k)

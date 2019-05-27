@@ -7,7 +7,4 @@ Things left to do:
 -Perform a suitable regression on the curve of Q(r)
 -Optimising the Importance sampling approach for m reasonably big
 -Develop an algorithm for minorities
-Week 1
-Week 2
-Week 3
-Week 4
+

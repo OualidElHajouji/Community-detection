@@ -1,3 +1,9 @@
+"""
+
+Various functions for evaluating the quality of clustering
+
+"""
+
 import numpy as np
 
 def normal(classes, clusters, size):
@@ -8,7 +14,7 @@ def normal(classes, clusters, size):
 def reEvaluate(classes, clusters, size):
     """Solves the issue of having clusters with the wrong labels. Only works with k = 2"""
     q = np.sum(classes == clusters)/size
-    return (q > .8)*clusters + (q < .2)*(1-clusters)
+    return (q > .5)*clusters + (q <= .5)*(1-clusters)
 
 def graph_ratio(cin, cout, n):
     """Returns the graph_ratio"""

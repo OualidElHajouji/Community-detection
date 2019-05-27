@@ -2,12 +2,15 @@
 
 Purpose of the test file:
 Given a certain subset of vertex within a random graph, estimate the probability of
-clustering badly the elements of this subset
+clustering badly the elements of this subset. In all this part, the subset contains one element,
+even though the functions are scalable and can be used for any subset.
 
 Considered a rare event.
 
 Approach 1: Using a basic Monte-Carlo estimation. Expected probability: 0.
-Approach 2: Using importance sampling. Expected probability: >0.
+Approach 2: Using importance sampling. Expected probability: >0. We have 2 models of importance sampling:
+                                                                 Model 0: Probability inversion
+                                                                 Model 1: General model
 
 """
 
@@ -32,11 +35,10 @@ def monteCarloApproach(nb_Simu=10000, set_of_vertices=range(1), random_class=Fal
     if (random_class):   #The class can either be random, or chosen
         classes = sbm.generateClasses(n, k, distribution=[])
     else:
-        classes = [0] * (n // 2) + [1] * (n - n // 2)
+        classes = [0] * (n // 2) + [1] * (n - n // 2)   # Codominant classes [0,0,0...0,1...1,1,1]
     v = len(set_of_vertices)
 
     for i in range(nb_Simu):
-        print(i)
         graph = sbm.simulate(n, cin, cout, k, classes)
         clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)   #We make sure to get the labels of the clusters right
         res += qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)
@@ -61,7 +63,7 @@ def subset_superior_to(set, i):
 
 
 def factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, qin, qout, model):
-    """Calculates the factor inside the expectation in the importance sampling formula, depending on the model """
+    """Calculates the factor inside the expectation in the importance sampling formula, depending on the model (model 0 : inversion, model 1 : general with parameters qin,qout"""
     if (model==0):  # Probability inversion (qin =pout, qout = pin)
         sum = 0
         for i in set_of_vertices:
@@ -93,46 +95,75 @@ def factor_outside(classes, classes_list, set_of_vertices, pin, pout, qin, qout,
         return product
 
 def importanceSamplingApproach(qin, qout,nb_Simu=10000, set_of_vertices=range(1), model=1, random_class=False):
-    """Returns the probability of misclustering of a given set_of_vertices using a model of importance sampling"""
-    proba = 0
-    sum = 0
-    variance = 0
+    """Returns the probability of misclustering of a given set_of_vertices using a model (0 or 1) of importance sampling"""
+    simulation = np.zeros(nb_Simu)
     if random_class:
         classes = sbm.generateClasses(n, k, distribution=[])
     else:
         classes = [0] * (n // 2) + [1] * (n - n // 2)
 
-    classes_list = equivalence_classes(classes)
+    classes_list = equivalence_classes(classes)   #List of classes
     pin = cin / n
     pout = cout / n
     v = len(set_of_vertices)
 
     for i in range(nb_Simu):
-        print(i) #In order to see the progress of the algorithm
 
-        graph = sbm.simulate_Importance_Sampling(n, cin, cout, qin, qout, k, set_of_vertices, classes, model)  # Simulation specific to the importance sampling model
-        clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)
+        graph = sbm.simulate_Importance_Sampling(n, cin, cout, qin, qout, k, set_of_vertices, classes, model)  # Simulation specific to the importance sampling model (with probability change)
+        clusters = qlt.reEvaluate(classes, spc.spectral_clustering(graph, k), n)  #Clustering
         badly_clustered = qlt.badly_clustered_test(set_of_vertices, v, classes, clusters)  # Whether the vertices are badly clustered
         fac_inside = factor_inside(graph, classes, classes_list, set_of_vertices, pin, pout, qin, qout, model)
-        proba += fac_inside * int(badly_clustered)    # This is inside the expectation
-        variance += np.power(fac_inside,2)*int(badly_clustered)
-        sum += int(badly_clustered)
+        simulation[i]= fac_inside * int(badly_clustered)    # This is inside the expectation
 
     fac_outside = factor_outside(classes, classes_list, set_of_vertices, pin, pout,qin,qout, model) # Outside the expectation
-    proba = (proba * fac_outside) / nb_Simu
-    variance = (variance*np.power(fac_outside,2)/nb_Simu) - np.power(proba,2)
-    std = np.sqrt(variance)
-    return proba, std
+    simulation = fac_outside*simulation
+    return simulation
+
+def test_importance_sampling(nb_Simu):
+    """Computes and plots all the results, for given parameters, of importance sampling algorithm"""
+    simulation = importanceSamplingApproach(0.2,0.9,nb_Simu=nb_Simu, set_of_vertices=range(25), model=0)
+    estimator = np.cumsum(simulation)/(np.arange(1,nb_Simu+1))   #Estimator of probability
+    proba = estimator[-1]
+    std = np.std(simulation)
+    a = max(proba - (1.96 * std / np.sqrt(nb_Simu)), 0)                 # Confidence interval
+    b = proba + (1.96 * std / np.sqrt(nb_Simu))
 
 
-proba, std = importanceSamplingApproach(0.2,0.9,nb_Simu=1000, set_of_vertices=range(1), model=1)
+    plt.plot(np.arange(1,nb_Simu+1),estimator,label = "Estimator of probability" )
+    plt.axhline(a, color = 'g', label="Lower bound")
+    plt.axhline(b, color = 'r', label = "Upper bound")
+    plt.xlabel("Simulations")
+    plt.ylabel("Estimator")
+    plt.title('Convergence of the estimator of the probability of bad clustering with cin = 90 and cout = 72')
+    plt.legend(loc='best')
+    plt.show()
+    print("Probability of bad clustering, with n =",n,", cin =",cin, ", cout =",cout, " is ", proba)
+    print("Standard deviation : ", std)
 
-print("Probability of bad clustering, with n =",n,", cin =",cin, ", cout =",cout, " is ", proba)
-print("Standard deviation : ", std)
-a = max(proba-(1.96*std/np.sqrt(n)),0)
-b = proba+(1.96*std/np.sqrt(n))
-print("Confidence interval (95%) : [",a,",",b,"]")
+    print("Confidence interval (95%) : [",a,",",b,"]")
 
-#print(monteCarloApproach(nb_Simu = 1000, set_of_vertices = range(1)))
+def test_Monte_Carlo(set):
+    """Tests Monte Carlo"""
+    return(monteCarloApproach(nb_Simu = 10000, set_of_vertices = set))
 
+
+def std_function_qin(N,nb_Simu,qout = 0.9):
+    """Scatter plot of std depending on qin using model 1"""
+    qin_space = np.linspace(0.1,0.9,N)
+    std_space = []
+    for qin in qin_space:
+        simulation = importanceSamplingApproach(qin, qout, nb_Simu=nb_Simu, set_of_vertices=range(1), model=1)
+        std = np.std(simulation)
+        std_space.append(std)
+    plt.scatter(qin_space,std_space)
+    plt.xlabel("Value of the parameter qin")
+    plt.ylabel("Standard deviation")
+    plt.title("Standard deviation depending on qin")
+    plt.show()
+
+#std_function_qin(8,5000)
+
+#print(test_Monte_Carlo(range(5)))
+
+#print(test_importance_sampling(10000))
 

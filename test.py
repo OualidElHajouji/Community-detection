@@ -4,7 +4,6 @@ Initial testing. Purpose:
 
 -Tests the correction of the spectral clustering algorithm
 
--Gives a sketch of further tests files used in the project
 
 """
 

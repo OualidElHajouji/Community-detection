@@ -43,9 +43,9 @@ def k_means(X, n_clusters):
 def spectral_clustering(affinity, n_clusters, cluster_method=k_means, laplacian_method=1):
     """Main spectral clustering algorithm"""
     L = laplacian(affinity, laplacian_method)
-    eig_val, eig_vect = scipy.sparse.linalg.eigs(L, n_clusters)
+    eig_val, eig_vect = scipy.sparse.linalg.eigs(L, n_clusters)  #  Obtaining eigen elements of the laplacian matrix
     X = eig_vect.real
     rows_norm = numpy.linalg.norm(X, axis=1, ord=2)
     Y = (X.T / rows_norm).T
-    labels = cluster_method(Y, n_clusters)
+    labels = cluster_method(Y, n_clusters)  # Clustering the rows
     return labels
