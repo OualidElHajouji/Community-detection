@@ -1,10 +1,20 @@
 # SNA_CommunityDetection
-After the intermediate report: 4 Fridays left.
-Things left to do:
--Study of the spectrum of different Laplacian matrices
--MCMC simulations for a large set of vertices (Hard)
--Study the evolution of r_critical in terms of distribution for different Laplacian matrices
--Perform a suitable regression on the curve of Q(r)
--Optimising the Importance sampling approach for m reasonably big
--Develop an algorithm for minorities
+
+Here are the purposes of each file :
+
+-clustering_quality: provides functions for evaluating the quality of clustering
+
+-graph_drawing: draws a graph with suitable layout, and with specific colors for each class/cluster
+
+-stochastic_block_model: Simulates a graph with the SBM, there is also a specific version for importance sampling
+
+-spectral_clustering_1: Applies the spectral clustering algorithm on an adjacecncy matrix A
+
+-test_misclustered_vertex: Computes probability of misclustering a small set of vertices using importance sampling
+
+-mcmc_large_values: Computes probability of misclustering a large set of vertices using MCMC splitting
+
+-test_ratio_hypothesis: Plots quality depending on graph ratio r
+
+-test: Tests the algorithm of spectral clustering and displays graphs
 
