@@ -1,6 +1,8 @@
 # SNA_CommunityDetection
 
-See the report for further detail about what is achieved by the code.
+The goal of this project is to implement spectral clustering and evaluate its robustness through probability computation of rare events, using methods such as importance sampling or Markov Chain Monte Carlo (MCMC) simulation.
+
+See the report (Report_RNS) for further detail about what is achieved by the code.
 
 Here are the purposes of each file :
 
@@ -10,7 +12,7 @@ Here are the purposes of each file :
 
 -stochastic_block_model: Simulates a graph with the SBM, there is also a specific version for importance sampling
 
--spectral_clustering_1: Applies the spectral clustering algorithm on an adjacecncy matrix A
+-spectral_clustering_1: Applies the spectral clustering algorithm on an adjacency matrix A
 
 -test_misclustered_vertex: Computes probability of misclustering a small set of vertices using importance sampling
 
