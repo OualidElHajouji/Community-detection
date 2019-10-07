@@ -1,5 +1,7 @@
 # SNA_CommunityDetection
 
+See the report for further detail about what is achieved by the code.
+
 Here are the purposes of each file :
 
 -clustering_quality: provides functions for evaluating the quality of clustering
